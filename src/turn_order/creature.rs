@@ -1,5 +1,6 @@
 pub mod status_effect;
 use status_effect::{StatusEffect, TurnsLeft, ClearType, DurationStatus};
+use core::fmt;
 
 
 pub struct Creature {
@@ -112,5 +113,54 @@ impl Creature {
 
     fn add_status_effect_to_list(&mut self, effect: status_effect::StatusEffect) {
         self.status_effects.push(effect);
+    }
+
+    fn get_status_effects_display(&self) -> Option<String> {
+        if self.status_effects.is_empty() {
+            return None;
+        }
+
+        let mut effects_str = String::new();
+
+        effects_str.push_str(" [");
+
+        
+        for i in 0..(self.status_effects.len()) {
+
+            match self.status_effects.get(i) {
+                Some(effect) => {
+                    let effect_name = effect.name();
+                    effects_str.push_str(&format!("{effect_name}"));
+
+                    if i < self.status_effects.len() - 1 {
+                        effects_str.push_str(", ");
+                    }
+                }
+                None => {
+                    let creature_name = self.name();
+                    panic!("Index out of bounds while iterating through {creature_name}'s status effects")
+                }
+            }
+        }
+
+        effects_str.push_str("]");
+
+        Some(effects_str)
+    }
+}
+
+
+impl fmt::Display for Creature {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut creature_str = String::new();
+
+        creature_str.push_str(self.name());
+
+        match self.get_status_effects_display() {
+            Some(ref effects) => creature_str.push_str(effects),
+            None => ()
+        }
+
+        write!(f, "{creature_str}")
     }
 }

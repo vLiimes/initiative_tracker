@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::creature;
+mod creature;
 use creature::status_effect;
 
 pub struct TurnOrder {
@@ -49,29 +49,27 @@ impl TurnOrder {
     // pub fn next_turn() ->
 }
 
-// TODO: NEED TO DO STATUS EFFECTS
 impl fmt::Display for TurnOrder {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut turn_order = String::new();
+        let mut turn_order_str = String::new();
 
         let mut creature_num: usize = 1;
 
         for creature in &self.creatures {
             let initiative = creature.initiative();
-            let name = creature.name();
 
-            if creature_num == self.current_turn {
-                turn_order.push_str(&format!("[{creature_num}] [CURRENT_TURN] I:{initiative} {name}\n"))
+            if creature_num - 1 == self.current_turn {
+                turn_order_str.push_str(&format!("[{creature_num}] [CURRENT TURN] I:{initiative} {creature}\n"))
             }
 
             else {
-                turn_order.push_str(&format!("[{creature_num}] I:{initiative} {name}\n"))
+                turn_order_str.push_str(&format!("[{creature_num}] I:{initiative} {creature}\n"))
             }
 
             creature_num += 1;
         }
 
-        write!(f, "{turn_order}")
+        write!(f, "{turn_order_str}")
     }
 }
 

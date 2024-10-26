@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 pub struct StatusEffect {
     id: usize,
     effect_name: String,

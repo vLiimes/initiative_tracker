@@ -1,2 +1,2 @@
 pub mod turn_order;
-pub mod creature;
+pub mod cli_interaction;
