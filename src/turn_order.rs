@@ -21,7 +21,16 @@ impl TurnOrder {
     }
 
     pub fn add_creature(&mut self, name: String, initiative: isize) {
-        self.creatures.push( creature::Creature::new(name, initiative))
+        self.creatures.push( creature::Creature::new(name, initiative));
+        self.reorder_creatures();
+    }
+
+    /*
+        Remove the creature using 0-based indexing
+     */
+    pub fn remove_creature(&mut self, creature_index: usize) {
+        self.creatures.remove(creature_index);
+        self.reorder_creatures();
     }
 
     // creature_num is 0 based indexing
@@ -43,6 +52,10 @@ impl TurnOrder {
             }
             None => Err(String::from("Index out of bounds"))
         }
+    }
+
+    fn reorder_creatures(&mut self) {
+        self.creatures.sort_by(|a, b| a.initiative().cmp(&b.initiative()));
     }
 
     // TODO
