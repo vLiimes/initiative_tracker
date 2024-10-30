@@ -1,6 +1,6 @@
 use core::fmt;
 
-mod creature;
+pub mod creature;
 use creature::status_effect;
 
 pub struct TurnOrder {
@@ -26,11 +26,20 @@ impl TurnOrder {
     }
 
     /*
+        TODO: Add error handling
         Remove the creature using 0-based indexing
      */
     pub fn remove_creature(&mut self, creature_index: usize) {
         self.creatures.remove(creature_index);
         self.reorder_creatures();
+    }
+
+    pub fn creature_num_valid(&self, index: usize) -> Result<String, String> {
+        if index >= self.creatures.len() {
+            return Err(String::from("Creature index out of range."));
+        }
+
+        return Ok(String::from("Value in range"));
     }
 
     // creature_num is 0 based indexing
@@ -54,12 +63,62 @@ impl TurnOrder {
         }
     }
 
+    /*
+        If operation Ok, will return a vec of strings that
+        represent creature updates.
+     */
+    pub fn next_turn(&mut self) -> Result<Vec<String>, String> {
+        let mut all_updates: Vec<String> = Vec::new();
+        // Call end turn on current creature and begin turn on the next
+        match self.creatures.get_mut(self.current_turn) {
+            Some(creature) => {
+                match creature.end_turn() {
+                    creature::CreatureUpdate::Updates(ref mut creature_updates) => {
+                        all_updates.append(creature_updates);
+                    }
+                    creature::CreatureUpdate::NoUpdate => ()
+                }
+            }
+            None => {
+                let index = self.current_turn;
+                return Err(format!("Error advancing turn: no creature found at index {index}"));
+
+            }
+        }
+
+        self.increase_turn_counter();
+
+        match self.creatures.get_mut(self.current_turn) {
+            Some(creature) => {
+                match creature.begin_turn() {
+                    creature::CreatureUpdate::Updates(ref mut creature_updates) => {
+                        all_updates.append(creature_updates);
+                    }
+                    creature::CreatureUpdate::NoUpdate => ()
+                }
+            }
+            None => {
+                let index = self.current_turn;
+                return Err(format!("Error advancing turn: no creature found at index {index}"));
+            }
+        }
+
+
+        return Ok(all_updates);
+    }
+
     fn reorder_creatures(&mut self) {
         self.creatures.sort_by(|a, b| a.initiative().cmp(&b.initiative()));
     }
 
-    // TODO
-    // pub fn next_turn() ->
+    fn increase_turn_counter(&mut self) {
+        self.current_turn += 1;
+        if self.current_turn >= self.creatures.len() {
+            self.current_turn = 0;
+        }
+    }
+
+    
 }
 
 impl fmt::Display for TurnOrder {

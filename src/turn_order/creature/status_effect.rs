@@ -42,6 +42,14 @@ impl StatusEffect {
         self.id
     }
 
+    pub fn clear_type(&self) -> &ClearType {
+        &self.clear_type
+    }
+
+    pub fn turns_left(&self) -> &TurnsLeft {
+        &self.turns_left
+    }
+
     /*
         Expectation is that no action will be taken for statuses
         that are cleared on end of turn if beginning of turn, and

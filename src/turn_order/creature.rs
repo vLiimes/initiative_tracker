@@ -91,7 +91,8 @@ impl Creature {
                 match self.status_effects.get(index) {
                     Some(effect) => {
                         let name = effect.name().to_owned();
-                        updates.push(format!("Status effect {name} has expired."));
+                        let creature_name = self.name();
+                        updates.push(format!("Status effect {name} has expired for creature {creature_name}."));
                         self.status_effects.remove(index);
                     }
                     None => panic!("This should never happen")
@@ -130,7 +131,12 @@ impl Creature {
             match self.status_effects.get(i) {
                 Some(effect) => {
                     let effect_name = effect.name();
-                    effects_str.push_str(&format!("{effect_name}"));
+                    let turns_left: String;
+                    match effect.turns_left() {
+                        TurnsLeft::Indefinite => turns_left = String::from("∞"),
+                        TurnsLeft::Finite(num) => turns_left = num.to_string()
+                    }
+                    effects_str.push_str(&format!("{effect_name} [{turns_left}]"));
 
                     if i < self.status_effects.len() - 1 {
                         effects_str.push_str(", ");

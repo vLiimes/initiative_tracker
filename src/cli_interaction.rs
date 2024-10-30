@@ -1,4 +1,4 @@
-use crate::turn_order::{self, TurnOrder};
+use crate::turn_order::{self, TurnOrder, creature::status_effect};
 use std::{io, str::FromStr};
 
 enum Command {
@@ -56,9 +56,9 @@ impl TextBased {
             "add" => { self.add_creature(); },
             "remove" => self.remove_creature(),
             "bulk" => self.bulk_add(),
-            "n" => (),
-            "next" => (),
-            "status" => (),
+            "n" => self.next_turn(),
+            "next" => self.next_turn(),
+            "status" => self.add_status_effect(),
             "exit" => { return CommandResult::End },
             _ => ()
         }
@@ -71,22 +71,22 @@ impl TextBased {
         let name: String;
         match get_input_from_user::<String>() {
             UserInputResult::Ok(input_name) => name = input_name,
+            UserInputResult::Cancel => return CommandResult::End,
             UserInputResult::Err(e) => {
                 println!("Error in name input: {e}");
                 return CommandResult::End;
             }
-            UserInputResult::Cancel => return CommandResult::End
         }
 
         println!("Enter the initiative.");
         let initiative: isize;
         match get_input_from_user::<isize>() {
             UserInputResult::Ok(input_init) => initiative = input_init,
+            UserInputResult::Cancel => return CommandResult::End,
             UserInputResult::Err(e) => {
                 println!("Error in initiative input: {e}");
                 return CommandResult::End;
             }
-            UserInputResult::Cancel => return CommandResult::End
 
         }
 
@@ -99,11 +99,11 @@ impl TextBased {
         let creature_num: usize;
         match get_input_from_user::<usize>() {
             UserInputResult::Ok(input_num) => creature_num = input_num - 1,
+            UserInputResult::Cancel => return,
             UserInputResult::Err(e) => {
                 println!("Error in creature num input: {e}");
                 return;
             }
-            UserInputResult::Cancel => return
         }
 
         self.turn_order.remove_creature(creature_num);
@@ -116,6 +116,105 @@ impl TextBased {
                 CommandResult::End => return
             }
         }
+    }
+
+    fn next_turn(&mut self) {
+        match self.turn_order.next_turn() {
+            Ok(updates) => {
+                for update in &updates {
+                    println!("{update}");
+                }
+            }
+            Err(e) => println!("Error advancing turn: {e}")
+        }
+    }
+
+    fn add_status_effect(&mut self) {
+        println!("Enter the number of the creature.");
+        let creature_num: usize;
+        match get_input_from_user::<usize>() {
+            UserInputResult::Ok(input_num) => {
+                creature_num = input_num - 1;
+                match self.turn_order.creature_num_valid(creature_num) {
+                    Ok(msg) => (),
+                    Err(e) => println!("Error: invalid creature index.")
+                }
+            },
+            UserInputResult::Cancel => return,
+            UserInputResult::Err(e) => {
+                println!("Error in creature num input: {e}");
+                return;
+            }
+        }
+        println!("Enter the name of the status effect.");
+        let effect_name: String;
+        match get_input_from_user::<String>() {
+            UserInputResult::Ok(name) => effect_name = name,
+            UserInputResult::Cancel => return,
+            UserInputResult::Err(e) => {
+                println!("Error in creature num input: {e}");
+                return;
+            }
+        }
+
+        /*
+            Any cancels will be interpreted as default statuses, but
+            depending on which point it's at, default values may be 
+            used for a more complete status
+
+            Just use basic add status if cancelled at this point
+         */
+
+        println!("Enter clear type (\"start\" or \"end\"), or press enter again for indefinite clear");
+        let clear_type: status_effect::ClearType;
+
+        loop {
+            match get_input_from_user::<String>() {
+                UserInputResult::Ok(user_input) => {
+                    match user_input.to_lowercase().as_str() {
+                        "start" => {
+                            clear_type = status_effect::ClearType::BeginningOfTurn;
+                            break;
+                        }
+                        "end" => {
+                            clear_type = status_effect::ClearType::EndOfTurn;
+                            break;
+                        }
+                        _ => {
+                            println!("Unrecognized clear type. Try again.");
+                        }
+                    }
+                }
+                UserInputResult::Cancel => {
+                    self.turn_order.add_status_effect(creature_num, effect_name);
+                    return;
+                }
+                UserInputResult::Err(e) => {
+                    println!("Error in Clear Type input: {e}");
+                    return;
+                }
+            }
+        }
+
+        println!("Enter duration in number of turns, or press enter again for indefinite clear.");
+        let duration: usize;
+        match get_input_from_user::<usize>() {
+            UserInputResult::Ok(user_num) => duration = user_num,
+            UserInputResult::Cancel => {
+                self.turn_order.add_status_effect(creature_num, effect_name);
+                return;
+            }
+            UserInputResult::Err(e) => {
+                println!("Error in duration input: {e}");
+                return;
+            }
+        }
+
+        match self.turn_order.add_status_effect_timed(creature_num, effect_name, duration, clear_type) {
+            Ok(msg) => (),
+            Err(e) => println!("Error adding completed status effect: {e}")
+        }
+        
     }
 }
 
