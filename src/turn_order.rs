@@ -108,7 +108,7 @@ impl TurnOrder {
     }
 
     fn reorder_creatures(&mut self) {
-        self.creatures.sort_by(|a, b| a.initiative().cmp(&b.initiative()));
+        self.creatures.sort_by(|a, b| b.initiative().cmp(&a.initiative()));
     }
 
     fn increase_turn_counter(&mut self) {
