@@ -1,4 +1,5 @@
-use crate::turn_order::{self, TurnOrder, creature::status_effect};
+//use turn_order::turn_order::{self, TurnOrder, creature::status_effect};
+use turn_order::turn_order::{TurnOrder, creature::status_effect};
 use std::{io, str::FromStr};
 
 enum Command {
@@ -21,7 +22,7 @@ enum UserInputResult<T, E> {
 }
 
 struct TextBased {
-    turn_order: turn_order::TurnOrder
+    turn_order: TurnOrder
 }
 
 impl TextBased {
@@ -246,7 +247,7 @@ where
 //fn get_num_from_user() -> Result
 
 pub fn test() -> () {
-    let mut turn_order = turn_order::TurnOrder::new();
+    let mut turn_order = TurnOrder::new();
     turn_order.add_creature(String::from("Jeremy"), 10);
 
     turn_order.add_status_effect(0, String::from("Poisoned"));
