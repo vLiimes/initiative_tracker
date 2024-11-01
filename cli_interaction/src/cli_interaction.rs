@@ -2,14 +2,6 @@
 use turn_order::turn_order::{TurnOrder, creature::status_effect};
 use std::{io, str::FromStr};
 
-enum Command {
-    Add,
-    Remove,
-    Bulk,
-    Advance,
-    Exit
-}
-
 enum CommandResult {
     End,
     Continue
@@ -242,19 +234,6 @@ where
         Ok(user_num) => UserInputResult::Ok(user_num),
         Err(e) => UserInputResult::Err(e.to_string())
     }
-}
-
-//fn get_num_from_user() -> Result
-
-pub fn test() -> () {
-    let mut turn_order = TurnOrder::new();
-    turn_order.add_creature(String::from("Jeremy"), 10);
-
-    turn_order.add_status_effect(0, String::from("Poisoned"));
-    turn_order.add_status_effect(0, String::from("Weakened"));
-
-
-    println!("{turn_order}");
 }
 
 pub fn start() {
