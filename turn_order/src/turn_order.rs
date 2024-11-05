@@ -34,32 +34,36 @@ impl TurnOrder {
         self.reorder_creatures();
     }
 
-    pub fn creature_num_valid(&self, index: usize) -> Result<String, String> {
+    pub fn creatures(&self) -> &Vec<creature::Creature> {
+        &self.creatures
+    }
+
+    pub fn creature_num_valid(&self, index: usize) -> Result<(), &'static str> {
         if index >= self.creatures.len() {
-            return Err(String::from("Creature index out of range."));
+            return Err("Creature index out of range.");
         }
 
-        return Ok(String::from("Value in range"));
+        Ok(())
     }
 
     // creature_num is 0 based indexing
-    pub fn add_status_effect(&mut self, creature_num: usize, effect_name: String) -> Result<String, String> {
+    pub fn add_status_effect(&mut self, creature_num: usize, effect_name: String) -> Result<(), &'static str> {
         match self.creatures.get_mut(creature_num) {
             Some(creature) => {
                 creature.add_status_effect(effect_name);
-                Ok(String::from("Ok"))
+                Ok(())
             }
-            None => Err(String::from("Index out of bounds"))
+            None => Err("Index out of bounds")
         }
     }
 
-    pub fn add_status_effect_timed(&mut self, creature_num: usize, effect_name: String, duration: usize, clear_type: status_effect::ClearType) -> Result<String, String> {
+    pub fn add_status_effect_timed(&mut self, creature_num: usize, effect_name: String, duration: usize, clear_type: status_effect::ClearType) -> Result<(), &'static str> {
         match self.creatures.get_mut(creature_num) {
             Some(creature) => {
                 creature.add_status_effect_timed(effect_name, duration, clear_type);
-                Ok(String::from("Ok"))
+                Ok(())
             }
-            None => Err(String::from("Index out of bounds"))
+            None => Err("Index out of bounds")
         }
     }
 

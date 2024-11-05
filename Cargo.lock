@@ -1337,6 +1337,7 @@ name = "gui_interaction"
 version = "0.1.0"
 dependencies = [
  "eframe",
+ "turn_order",
 ]
 
 [[package]]

@@ -18,7 +18,7 @@ struct TextBased {
 }
 
 impl TextBased {
-    pub fn start(&mut self) -> Result<String, String> {
+    pub fn start(&mut self) -> Result<(), String> {
         println!();
         println!(r#"Available commands: ["Add", "Remove", "Bulk", "(N)ext, Status, Exit]"#);
         println!(r#"Commands are not case sensitive, if a command has a letter in paretheses, that is its abbreviation."#);
@@ -41,7 +41,7 @@ impl TextBased {
     
     
     
-        Ok(String::from("Finished Okay!"))
+        Ok(())
     }
     
     fn process_command(&mut self, user_input: &str) -> CommandResult {
@@ -129,7 +129,7 @@ impl TextBased {
             UserInputResult::Ok(input_num) => {
                 creature_num = input_num - 1;
                 match self.turn_order.creature_num_valid(creature_num) {
-                    Ok(msg) => (),
+                    Ok(_) => (),
                     Err(e) => println!("Error: invalid creature index.")
                 }
             },
@@ -204,7 +204,7 @@ impl TextBased {
         }
 
         match self.turn_order.add_status_effect_timed(creature_num, effect_name, duration, clear_type) {
-            Ok(msg) => (),
+            Ok(_) => (),
             Err(e) => println!("Error adding completed status effect: {e}")
         }
         
