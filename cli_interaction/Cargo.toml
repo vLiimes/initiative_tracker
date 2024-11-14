@@ -2,6 +2,10 @@
 name = "cli_interaction"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 [dependencies]
 turn_order = { path = "../turn_order" }
+
+[build-dependencies]
+winresource = "0.1.17"

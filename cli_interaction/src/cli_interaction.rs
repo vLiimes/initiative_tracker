@@ -66,7 +66,7 @@ impl TextBased {
             UserInputResult::Ok(input_name) => name = input_name,
             UserInputResult::Cancel => return CommandResult::End,
             UserInputResult::Err(e) => {
-                println!("Error in name input: {e}");
+                eprintln!("Error in name input: {e}");
                 return CommandResult::End;
             }
         }
@@ -77,7 +77,7 @@ impl TextBased {
             UserInputResult::Ok(input_init) => initiative = input_init,
             UserInputResult::Cancel => return CommandResult::End,
             UserInputResult::Err(e) => {
-                println!("Error in initiative input: {e}");
+                eprintln!("Error in initiative input: {e}");
                 return CommandResult::End;
             }
 
@@ -94,7 +94,7 @@ impl TextBased {
             UserInputResult::Ok(input_num) => creature_num = input_num - 1,
             UserInputResult::Cancel => return,
             UserInputResult::Err(e) => {
-                println!("Error in creature num input: {e}");
+                eprintln!("Error in creature num input: {e}");
                 return;
             }
         }
@@ -118,7 +118,7 @@ impl TextBased {
                     println!("{update}");
                 }
             }
-            Err(e) => println!("Error advancing turn: {e}")
+            Err(e) => eprintln!("Error advancing turn: {e}")
         }
     }
 
@@ -130,12 +130,12 @@ impl TextBased {
                 creature_num = input_num - 1;
                 match self.turn_order.creature_num_valid(creature_num) {
                     Ok(_) => (),
-                    Err(e) => println!("Error: invalid creature index.")
+                    Err(e) => eprintln!("Error: invalid creature index.")
                 }
             },
             UserInputResult::Cancel => return,
             UserInputResult::Err(e) => {
-                println!("Error in creature num input: {e}");
+                eprintln!("Error in creature num input: {e}");
                 return;
             }
         }
@@ -145,7 +145,7 @@ impl TextBased {
             UserInputResult::Ok(name) => effect_name = name,
             UserInputResult::Cancel => return,
             UserInputResult::Err(e) => {
-                println!("Error in creature num input: {e}");
+                eprintln!("Error in creature num input: {e}");
                 return;
             }
         }
@@ -183,7 +183,7 @@ impl TextBased {
                     return;
                 }
                 UserInputResult::Err(e) => {
-                    println!("Error in Clear Type input: {e}");
+                    eprintln!("Error in Clear Type input: {e}");
                     return;
                 }
             }
@@ -198,14 +198,14 @@ impl TextBased {
                 return;
             }
             UserInputResult::Err(e) => {
-                println!("Error in duration input: {e}");
+                eprintln!("Error in duration input: {e}");
                 return;
             }
         }
 
         match self.turn_order.add_status_effect_timed(creature_num, effect_name, duration, clear_type) {
             Ok(_) => (),
-            Err(e) => println!("Error adding completed status effect: {e}")
+            Err(e) => eprintln!("Error adding completed status effect: {e}")
         }
         
     }
