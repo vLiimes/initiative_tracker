@@ -19,11 +19,9 @@ struct TextBased {
 
 impl TextBased {
     pub fn start(&mut self) -> Result<(), String> {
-        println!();
         println!(r#"Available commands: ["Add", "Remove", "Bulk", "(N)ext, Status, Exit]"#);
         println!(r#"Commands are not case sensitive, if a command has a letter in paretheses, that is its abbreviation."#);
         println!(r#"Additionally, press enter again after (or during in most cases) commands to cancel."#);
-        println!();
     
         loop {
             let turn_order = &self.turn_order;
